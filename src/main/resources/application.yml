@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: ms-auth
+
+application:
+  client:
+    ms-user:
+      url: http://localhost:8081
