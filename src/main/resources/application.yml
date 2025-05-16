@@ -1,8 +1,14 @@
 spring:
   application:
     name: ms-auth
-
 application:
   client:
     ms-user:
-      url: http://localhost:8081
+      url: http://localhost:8083
+server:
+  port: 8082
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
         url = "${application.client.ms-user.url}/v1/users")
 public interface UserClient {
 
-    @GetMapping("/{username}")
-    UserView findByUsername(@PathVariable  String username);
+    @GetMapping("/{email}")
+    UserView getUserByEmail(@PathVariable String email);
+
 }

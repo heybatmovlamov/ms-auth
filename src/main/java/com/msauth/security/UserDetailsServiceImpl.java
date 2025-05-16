@@ -3,8 +3,8 @@ package com.msauth.security;
 import com.msauth.client.UserClient;
 import com.msauth.client.model.UserView;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -19,11 +20,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserView user = userRepository.findByUsername(username);
+        UserView user = userRepository.getUserByEmail(username);
 
-        List<GrantedAuthority> authorities = user.getRole().stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),

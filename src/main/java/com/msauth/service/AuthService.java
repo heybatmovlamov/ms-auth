@@ -20,12 +20,11 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public TokenResponse authenticate(UserRequest signinRequest) {
+    public TokenResponse authenticate(UserRequest signInRequest) {
         var authToken = new UsernamePasswordAuthenticationToken(
-                signinRequest.getEmail(),
-                signinRequest.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authToken);
-        log.info("Authenticated user: {}", authentication.getPrincipal());
+                signInRequest.getEmail(),
+                signInRequest.getPassword());
+        final Authentication authentication = authenticationManager.authenticate(authToken);
         return jwtService.generateToken(authentication);
     }
 }

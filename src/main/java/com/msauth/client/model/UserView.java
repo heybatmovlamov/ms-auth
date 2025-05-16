@@ -1,11 +1,16 @@
 package com.msauth.client.model;
 
-import java.util.List;
+import com.msauth.client.model.enums.UserRole;
+import com.msauth.client.model.enums.UserStatus;
 import lombok.Data;
 
 @Data
 public class UserView {
-    private final String email;
-    private final String password;
-    private final List<String> role;
+
+    private Long id;
+    private String username;
+    private String email;
+    private UserRole role;
+    private UserStatus status;
+    private String password;
 }
