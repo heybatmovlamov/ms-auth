@@ -1,30 +1,60 @@
 package com.msauth.service;
 
+import com.msauth.client.UserClient;
+import com.msauth.client.model.UserView;
+import com.msauth.exception.BadCredentialsException;
+import com.msauth.exception.DataNotFoundException;
+import com.msauth.model.OtpRequest;
 import com.msauth.model.TokenResponse;
 import com.msauth.model.UserRequest;
 import com.msauth.security.JwtService;
-import lombok.Data;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@Data
 @RequiredArgsConstructor
 @Service
 public class AuthService {
 
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final OtpService otpService;
+    private final UserClient userClient;
 
-    public TokenResponse authenticate(UserRequest signInRequest) {
-        var authToken = new UsernamePasswordAuthenticationToken(
-                signInRequest.getEmail(),
-                signInRequest.getPassword());
-        final Authentication authentication = authenticationManager.authenticate(authToken);
+    public TokenResponse authenticate(OtpRequest request) {
+        String email = request.getEmail();
+        String otp = request.getOtp();
+
+        otpService.verifyOtp(email, otp);
+
+        final UserView user = userClient.getUserByEmail(email);
+
+        final Authentication authentication = new UsernamePasswordAuthenticationToken(
+                request.getEmail()
+                , null
+                , List.of(new SimpleGrantedAuthority(user.getRole().name())));
+
         return jwtService.generateToken(authentication);
+    }
+
+    public String validateUser(UserRequest signInRequest) {
+        String email = signInRequest.getEmail();
+        final UserView user = userClient.getUserByEmail(email);
+
+        if (user == null) {
+            throw DataNotFoundException.of("DATA_NOT_FOUND", "User not found");
+        }
+
+        if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
+            throw BadCredentialsException.of("Email or password is incorrect");
+        }
+        otpService.optSender(email);
+        return "OTP sent to your email. Please verify.";
     }
 }

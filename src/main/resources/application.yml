@@ -1,12 +1,42 @@
 spring:
   application:
     name: ms-auth
+  data:
+    redis:
+      password: pass123
+      cluster:
+        nodes:
+          - localhost:6379
+        max-redirects: 3
+      host: localhost
+      port: 6379
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: heybetmovlamov2005@gmail.com
+    password: shqj qdts kxkw lngf
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 3000
+          timeout: 3000
+          writetimeout: 3000
+
 application:
   client:
     ms-user:
-      url: http://localhost:8083
+      url: http://localhost:8080
+
 server:
-  port: 8082
+  port: 8081
 
 logging:
   level:
