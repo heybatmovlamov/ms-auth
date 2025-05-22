@@ -1,5 +1,8 @@
 package com.msauth.service;
 
+import static com.msauth.exception.constant.ErrorMessage.EMAIL_OR_PASSWORD_IS_INCORRECT;
+import static com.msauth.exception.constant.ErrorMessage.USER_NOT_FOUND;
+
 import com.msauth.client.UserClient;
 import com.msauth.client.model.UserView;
 import com.msauth.exception.BadCredentialsException;
@@ -28,8 +31,8 @@ public class AuthService {
     private final UserClient userClient;
 
     public TokenResponse authenticate(OtpRequest request) {
-        String email = request.getEmail();
-        String otp = request.getOtp();
+        final String email = request.getEmail();
+        final String otp = request.getOtp();
 
         otpService.verifyOtp(email, otp);
 
@@ -48,11 +51,11 @@ public class AuthService {
         final UserView user = userClient.getUserByEmail(email);
 
         if (user == null) {
-            throw DataNotFoundException.of("DATA_NOT_FOUND", "User not found");
+            throw DataNotFoundException.of(USER_NOT_FOUND);
         }
 
         if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
-            throw BadCredentialsException.of("Email or password is incorrect");
+            throw BadCredentialsException.of(EMAIL_OR_PASSWORD_IS_INCORRECT);
         }
         otpService.optSender(email);
         return "OTP sent to your email. Please verify.";

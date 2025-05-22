@@ -1,13 +1,9 @@
 spring:
   application:
     name: ms-auth
+
   data:
     redis:
-      password: pass123
-      cluster:
-        nodes:
-          - localhost:6379
-        max-redirects: 3
       host: localhost
       port: 6379
   rabbitmq:
@@ -34,6 +30,10 @@ application:
   client:
     ms-user:
       url: http://localhost:8080
+  cache:
+    email-otp:
+      prefix: "email_otp"
+      ttl: 300
 
 server:
   port: 8081

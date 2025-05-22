@@ -1,5 +1,6 @@
 package com.msauth.exception;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import com.msauth.exception.model.ErrorResponse;
@@ -36,6 +37,20 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DataNotFoundException.class)
     public ErrorResponse handleDataNotFoundException(DataNotFoundException ex) {
         addErrorLog(NOT_FOUND, ex.getErrorCode(), ex.getMessage(), "DataNotFoundException");
+        return new ErrorResponse(ex.getErrorCode(), ex.getMessage());
+    }
+
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler(InputMismatchException.class)
+    public ErrorResponse handleInputMismatchException(InputMismatchException ex) {
+        addErrorLog(BAD_REQUEST, ex.getErrorCode(), ex.getMessage(), "InputMismatchException");
+        return new ErrorResponse(ex.getErrorCode(), ex.getMessage());
+    }
+
+    @ResponseStatus(NOT_FOUND)
+    @ExceptionHandler(OtpExpiredException.class)
+    public ErrorResponse handleInputMismatchException(OtpExpiredException ex) {
+        addErrorLog(NOT_FOUND, ex.getErrorCode(), ex.getMessage(), "OtpExpiredException");
         return new ErrorResponse(ex.getErrorCode(), ex.getMessage());
     }
 
