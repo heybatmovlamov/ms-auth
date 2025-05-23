@@ -1,8 +1,8 @@
 package com.msauth.controller;
 
-import com.msauth.model.OtpRequest;
+import com.msauth.model.AuthenticateRequest;
 import com.msauth.model.TokenResponse;
-import com.msauth.model.UserRequest;
+import com.msauth.model.ValidateRequest;
 import com.msauth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +20,12 @@ public class AuthController {
     private final AuthService service;
 
     @PostMapping("/authenticate")
-    public ResponseEntity<TokenResponse> authenticate(@Valid @RequestBody OtpRequest userRequest) {
+    public ResponseEntity<TokenResponse> authenticate(@Valid @RequestBody AuthenticateRequest userRequest) {
         return ResponseEntity.ok(service.authenticate(userRequest));
     }
 
     @PostMapping("/validate")
-    public ResponseEntity<String> validate(@Valid @RequestBody UserRequest userRequest) {
-        return ResponseEntity.ok(service.validateUser(userRequest));
+    public ResponseEntity<String> validate(@Valid @RequestBody ValidateRequest validateRequest) {
+        return ResponseEntity.ok(service.validateUser(validateRequest));
     }
 }

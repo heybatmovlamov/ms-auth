@@ -7,9 +7,9 @@ import com.msauth.client.UserClient;
 import com.msauth.client.model.UserView;
 import com.msauth.exception.BadCredentialsException;
 import com.msauth.exception.DataNotFoundException;
-import com.msauth.model.OtpRequest;
+import com.msauth.model.AuthenticateRequest;
 import com.msauth.model.TokenResponse;
-import com.msauth.model.UserRequest;
+import com.msauth.model.ValidateRequest;
 import com.msauth.security.JwtService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class AuthService {
     private final OtpService otpService;
     private final UserClient userClient;
 
-    public TokenResponse authenticate(OtpRequest request) {
+    public TokenResponse authenticate(AuthenticateRequest request) {
         final String email = request.getEmail();
         final String otp = request.getOtp();
 
@@ -42,22 +42,21 @@ public class AuthService {
                 request.getEmail()
                 , null
                 , List.of(new SimpleGrantedAuthority(user.getRole().name())));
-
         return jwtService.generateToken(authentication);
     }
 
-    public String validateUser(UserRequest signInRequest) {
-        String email = signInRequest.getEmail();
+    public String validateUser(ValidateRequest request) {
+        String email = request.getEmail();
         final UserView user = userClient.getUserByEmail(email);
 
         if (user == null) {
             throw DataNotFoundException.of(USER_NOT_FOUND);
         }
 
-        if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw BadCredentialsException.of(EMAIL_OR_PASSWORD_IS_INCORRECT);
         }
-        otpService.optSender(email);
+        otpService.optSender(request);
         return "OTP sent to your email. Please verify.";
     }
 }

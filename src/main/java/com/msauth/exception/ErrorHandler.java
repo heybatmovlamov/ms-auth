@@ -4,7 +4,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import com.msauth.exception.model.ErrorResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @Log4j2
 @Component
-@RequiredArgsConstructor
 @RestControllerAdvice
 public class ErrorHandler extends ResponseEntityExceptionHandler {
 
@@ -49,7 +47,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
 
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(OtpExpiredException.class)
-    public ErrorResponse handleInputMismatchException(OtpExpiredException ex) {
+    public ErrorResponse handleOtpExpiredException(OtpExpiredException ex) {
         addErrorLog(NOT_FOUND, ex.getErrorCode(), ex.getMessage(), "OtpExpiredException");
         return new ErrorResponse(ex.getErrorCode(), ex.getMessage());
     }

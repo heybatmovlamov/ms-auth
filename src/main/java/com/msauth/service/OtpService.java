@@ -7,7 +7,8 @@ import com.msauth.dao.EmailOtpRepository;
 import com.msauth.exception.InputMismatchException;
 import com.msauth.exception.OtpExpiredException;
 import com.msauth.messaging.OtpProducer;
-import com.msauth.model.OtpRequest;
+import com.msauth.model.NotificationCreateRequest;
+import com.msauth.model.ValidateRequest;
 import java.security.SecureRandom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,14 +23,17 @@ public class OtpService {
         return String.format("%06d", new SecureRandom().nextInt(1000000));
     }
 
-    public void optSender(String email) {
+    public void optSender(ValidateRequest request) {
         final String otp = generateOtp();
 
-        OtpRequest message = OtpRequest.builder()
-                .email(email)
-                .otp(otp).build();
+        NotificationCreateRequest message = NotificationCreateRequest.builder()
+                .channelType(request.getChannelType())
+                .email(request.getEmail())
+                .phoneNumber(request.getPhoneNumber())
+                .otp(otp)
+                .build();
 
-        emailOtpRepository.save(email, otp);
+        emailOtpRepository.save(request.getEmail(), otp);
         otpProducer.sendOtpMessage(message);
     }
 
