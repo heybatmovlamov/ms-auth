@@ -11,20 +11,6 @@ spring:
     port: 5672
     username: guest
     password: guest
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: heybetmovlamov2005@gmail.com
-    password: shqj qdts kxkw lngf
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-          connectiontimeout: 3000
-          timeout: 3000
-          writetimeout: 3000
 
 application:
   client:
